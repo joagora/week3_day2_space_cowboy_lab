@@ -8,7 +8,6 @@ bounty2 = Bounty.new({'name' => 'Jabba The Hutt', 'bounty_value' => '2500', 'dan
 bounty1.save
 bounty2.save
 
-all_bounty = Bounty.all
-p all_bounty
 
-bounty1.delete
+p Bounty.find_by_name("JarJar")
+p Bounty.find_by_id("5")
