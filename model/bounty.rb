@@ -1,7 +1,7 @@
 require('pry-byebug')
 require('pg')
 class Bounty
-
+  attr_writer :bounty_value
   def initialize attributes
     @id = attributes['id'].to_i if attributes['id']
     @name = attributes['name']
@@ -44,4 +44,32 @@ class Bounty
     db.close
   end
 
+  def update
+    db = PG.connect({dbname: 'bounty', host: 'localhost'})
+    sql = "UPDATE bounty SET (name, bounty_value, danger_level, favourite_weapon) = ($1, $2, $3, $4) WHERE id = $5;"
+    values = [@name, @bounty_value, @danger_level, @favourite_weapon, @id]
+    db.prepare("update", sql)
+    db.exec_prepared("update", values)
+    db.close
+  end
+
+  def Bounty.find_by_name (name)
+    db = PG.connect({dbname: 'bounty', host: 'localhost'})
+    sql = "SELECT * FROM bounty WHERE name = $1;"
+    values = [name]
+    db.prepare("find", sql)
+    bounties = db.exec_prepared("find", values)
+    db.close
+    return Bounty.new(bounties.first)
+  end
+
+  def Bounty.find_by_id (id)
+    db = PG.connect({dbname: 'bounty', host: 'localhost'})
+    sql = "SELECT * FROM bounty WHERE id = $1;"
+    values = [id]
+    db.prepare("find_by_id", sql)
+    bounties = db.exec_prepared("find_by_id", values)
+    db.close
+    return Bounty.new(bounties.first)
+  end
 end
